@@ -445,3 +445,19 @@ def run_rm_cv(abundance_dict, label_dict, extra_feature_dicts=None, test_size=0.
 #     mean_score_dict = {sample_id: np.mean(np.array(score_matrix), axis=0) for sample_id, score_matrix in healthy_score_dict.items()}
 #     importance_matrix = np.array(importance_matrix)
 #     return mean_score_dict, importance_matrix
+
+def predict_score_cv(abundance_dict, label_dict, k=5, n_iter=10):
+    score_dict = {k: 0 for k in label_dict.keys()}
+    kf = KFold(n_splits=5, shuffle=True)
+    x, y, sample_id_list = get_xy(abundance_dict, label_dict)
+    for _ in range(n_iter):
+        for train_index, test_index in kf.split(x):
+            x_train, x_test = x[train_index], x[test_index]
+            y_train, y_test = y[train_index], y[test_index]
+            clf = RandomForestClassifier(n_estimators=500)
+            clf.fit(x_train, y_train)
+            y_prob = clf.predict_proba(x_test)
+            y_pred = clf.predict(x_test)
+            for i, sample_index in enumerate(test_index):
+                score_dict[sample_id_list[sample_index]] += y_prob[i][1]
+    return {k: v/n_iter for k, v in score_dict.items()}

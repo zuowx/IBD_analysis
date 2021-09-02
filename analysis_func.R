@@ -75,7 +75,7 @@ plot.pcoa <- function(filename,metadata,plot_title){
   return(pcoa_plot)
 }
 
-lm_analysis <- function(df) {
+lm.analysis <- function(df) {
   lm_fit <- lm(log(shannon)~Phenotype+Age+Gender, data=df)
   print(lm_result <- summary(lm_fit))
   return(lm_fit)
@@ -84,7 +84,7 @@ lm_analysis <- function(df) {
 library(RcppCNPy)
 library(ecodist)
 
-mrm_analysis <- function(distance_matrix, sample_type_D1, sample_type_D2, age_D, gender_D1, gender_D2) {
+mrm.analysis <- function(distance_matrix, sample_type_D1, sample_type_D2, age_D, gender_D1, gender_D2) {
   mrm_result <- MRM(as.dist(log(distance_matrix)) ~ as.dist(sample_type_D1)+as.dist(sample_type_D2)+as.dist(age_D)+as.dist(gender_D1)+as.dist(gender_D2)-1)
   print(mrm_result)
   return(mrm_result)
